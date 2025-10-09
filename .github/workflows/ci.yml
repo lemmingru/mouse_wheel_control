@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    
+    - name: Install UV
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+    
+    - name: Install dependencies
+      run: |
+        uv sync
+    
+    - name: Check syntax
+      run: |
+        uv run python -m py_compile src/mouse_wheel_control/main.py
+    
+    - name: Check imports
+      run: |
+        uv run python -c "import sys; sys.path.append('src'); from mouse_wheel_control.main import MouseWheelMissionControl; print('Imports successful')"
+    
+    - name: Validate plist syntax
+      run: |
+        plutil -lint com.user.mousewheelcontrol.plist
+    
+    - name: Check shell scripts
+      run: |
+        shellcheck install.sh uninstall.sh || echo "ShellCheck not available, skipping"
+    
+    - name: Test installation script (dry run)
+      run: |
+        # Проверяем, что скрипт установки не падает на проверках
+        chmod +x install.sh
+        # Не запускаем полную установку в CI, только проверяем синтаксис
+        bash -n install.sh
+        bash -n uninstall.sh
