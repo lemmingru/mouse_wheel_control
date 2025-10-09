@@ -81,7 +81,7 @@ mouse-wheel-control/
 ├── CONTRIBUTING.md                    # Инструкции для участников
 ├── LICENSE                           # MIT лицензия
 ├── README.md                         # Основная документация
-├── com.user.mousewheelcontrol.plist  # Конфигурация LaunchAgent
+├── com.user.mousewheelcontrol.plist.template  # Шаблон LaunchAgent
 ├── install.sh                        # Скрипт установки
 ├── pyproject.toml                    # Конфигурация UV
 ├── uninstall.sh                      # Скрипт удаления
@@ -92,8 +92,8 @@ mouse-wheel-control/
 
 ### ✅ Основные файлы
 - **Python код** - полностью рабочий скрипт
-- **Скрипты установки/удаления** - автоматическая настройка
-- **LaunchAgent конфигурация** - автозапуск
+- **Скрипты установки/удаления** - автоматическая настройка с подстановкой путей
+- **Шаблон LaunchAgent** - автоматическая генерация конфигурации
 - **Документация** - подробные инструкции
 
 ### ✅ Файлы для GitHub

@@ -7,8 +7,8 @@
     
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/alxmelekhin/git/mouse_wheel_control/.venv/bin/python</string>
-        <string>/Users/alxmelekhin/git/mouse_wheel_control/src/mouse_wheel_control/main.py</string>
+        <string>PROJECT_PATH/.venv/bin/python</string>
+        <string>PROJECT_PATH/src/mouse_wheel_control/main.py</string>
     </array>
     
     <key>RunAtLoad</key>
@@ -24,7 +24,7 @@
     <string>/tmp/mousewheelcontrol.error.log</string>
     
     <key>WorkingDirectory</key>
-    <string>/Users/alxmelekhin/git/mouse_wheel_control</string>
+    <string>PROJECT_PATH</string>
     
     <key>EnvironmentVariables</key>
     <dict>
@@ -33,4 +33,3 @@
     </dict>
 </dict>
 </plist>
-

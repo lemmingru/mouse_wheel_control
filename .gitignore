@@ -67,6 +67,8 @@ Temporary Items
 
 # LaunchAgent (не включаем в репозиторий, создается при установке)
 ~/Library/LaunchAgents/com.user.mousewheelcontrol.plist
+# Старый plist с жестко прописанными путями
+com.user.mousewheelcontrol.plist
 
 # Temporary files
 *.tmp

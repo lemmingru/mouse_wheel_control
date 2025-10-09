@@ -8,7 +8,7 @@ echo "🗑️  Удаление утилиты Mouse Wheel Mission Control..."
 
 # Останавливаем службу
 echo "⏹️  Остановка службы..."
-launchctl unload "$HOME/Library/LaunchAgents/com.user.mousewheelcontrol.plist" 2>/dev/null || true
+launchctl bootout gui/$(id -u) "$HOME/Library/LaunchAgents/com.user.mousewheelcontrol.plist" 2>/dev/null || true
 
 # Удаляем plist файл
 echo "📋 Удаление конфигурации LaunchAgent..."

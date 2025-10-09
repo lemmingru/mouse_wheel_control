@@ -150,7 +150,7 @@ mouse_wheel_control/
 ├── uv.lock                      # Lock-файл зависимостей
 ├── install.sh                   # Скрипт установки
 ├── uninstall.sh                 # Скрипт удаления
-├── com.user.mousewheelcontrol.plist  # LaunchAgent
+├── com.user.mousewheelcontrol.plist.template  # Шаблон LaunchAgent
 └── README.md                    # Документация
 ```
 
@@ -190,9 +190,10 @@ uv sync
 3. Проверьте логи: `tail -f /tmp/mousewheelcontrol.log`
 
 ### Служба не запускается
-1. Проверьте пути в `com.user.mousewheelcontrol.plist`
+1. Проверьте, что скрипт установки выполнился успешно: `./install.sh`
 2. Убедитесь, что виртуальное окружение создано: `ls -la .venv`
 3. Проверьте права доступа: `chmod +x install.sh uninstall.sh`
+4. Проверьте созданный plist: `cat ~/Library/LaunchAgents/com.user.mousewheelcontrol.plist`
 
 ### Mission Control не открывается
 1. Проверьте, что Mission Control работает вручную (F3)

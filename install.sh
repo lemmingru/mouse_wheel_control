@@ -32,14 +32,15 @@ fi
 LAUNCH_AGENTS_DIR="$HOME/Library/LaunchAgents"
 mkdir -p "$LAUNCH_AGENTS_DIR"
 
-# Копируем plist файл
+# Копируем plist файл с подстановкой путей
 echo "📋 Копирование конфигурации LaunchAgent..."
-cp com.user.mousewheelcontrol.plist "$LAUNCH_AGENTS_DIR/"
+PROJECT_PATH=$(pwd)
+sed "s|PROJECT_PATH|$PROJECT_PATH|g" com.user.mousewheelcontrol.plist.template > "$LAUNCH_AGENTS_DIR/com.user.mousewheelcontrol.plist"
 
 # Загружаем службу
 echo "🔄 Загрузка службы..."
-launchctl unload "$LAUNCH_AGENTS_DIR/com.user.mousewheelcontrol.plist" 2>/dev/null || true
-launchctl load "$LAUNCH_AGENTS_DIR/com.user.mousewheelcontrol.plist"
+launchctl bootout gui/$(id -u) "$LAUNCH_AGENTS_DIR/com.user.mousewheelcontrol.plist" 2>/dev/null || true
+launchctl bootstrap gui/$(id -u) "$LAUNCH_AGENTS_DIR/com.user.mousewheelcontrol.plist"
 
 # Проверяем статус службы
 echo "✅ Проверка статуса службы..."
