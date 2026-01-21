@@ -6,14 +6,16 @@
 import sys
 import subprocess
 import signal
+import time
 from Quartz import (
-    CGEventTapCreate, 
-    kCGHIDEventTap, 
+    CGEventTapCreate,
+    kCGHIDEventTap,
     kCGEventTapOptionListenOnly,
     kCGEventOtherMouseDown,
-    kCGEventMaskForAllEvents,
+    CGEventMaskBit,
     CFMachPortCreateRunLoopSource,
     CFRunLoopAddSource,
+    CFRunLoopRemoveSource,
     CFRunLoopGetCurrent,
     kCFRunLoopDefaultMode,
     CGEventTapEnable,
@@ -28,18 +30,20 @@ class MouseWheelMissionControl:
         self.event_tap = None
         self.run_loop_source = None
         self.running = True
+        self.last_click_time = 0
+        self.debounce_interval = 0.5  # 500ms между нажатиями
         
     def open_mission_control(self):
         """Открывает Mission Control через AppleScript"""
         try:
             # Используем AppleScript для эмуляции нажатия F3 (код 160)
             script = 'tell application "System Events" to key code 160'
-            subprocess.run(["osascript", "-e", script], check=True)
-            print("Mission Control открыт")
+            subprocess.run(["osascript", "-e", script], check=True,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except subprocess.CalledProcessError as e:
-            print(f"Ошибка при открытии Mission Control: {e}")
+            print(f"Ошибка при открытии Mission Control: {e}", file=sys.stderr)
         except Exception as e:
-            print(f"Неожиданная ошибка: {e}")
+            print(f"Неожиданная ошибка: {e}", file=sys.stderr)
     
     def event_callback(self, proxy, event_type, event, refcon):
         """Обработчик событий мыши"""
@@ -47,9 +51,12 @@ class MouseWheelMissionControl:
             # Получаем номер кнопки мыши
             button_number = CGEventGetIntegerValueField(event, kCGMouseEventButtonNumber)
             if button_number == 2:  # Средняя кнопка мыши (колесо)
-                print("Обнаружено нажатие на колесо мыши")
-                self.open_mission_control()
-        
+                # Debouncing: игнорируем слишком частые нажатия
+                current_time = time.time()
+                if current_time - self.last_click_time >= self.debounce_interval:
+                    self.last_click_time = current_time
+                    self.open_mission_control()
+
         return event
     
     def setup_event_tap(self):
@@ -58,7 +65,7 @@ class MouseWheelMissionControl:
             kCGHIDEventTap,  # Перехватываем события на уровне HID
             0,  # Приоритет
             kCGEventTapOptionListenOnly,  # Только прослушивание
-            kCGEventMaskForAllEvents,  # Все события
+            CGEventMaskBit(kCGEventOtherMouseDown),  # Только события средней кнопки мыши
             self.event_callback,  # Функция обратного вызова
             None
         )
@@ -92,6 +99,12 @@ class MouseWheelMissionControl:
         """Очистка ресурсов"""
         if self.event_tap:
             CGEventTapEnable(self.event_tap, False)
+        if self.run_loop_source:
+            CFRunLoopRemoveSource(
+                CFRunLoopGetCurrent(),
+                self.run_loop_source,
+                kCFRunLoopDefaultMode
+            )
         print("Очистка ресурсов завершена")
     
     def run(self):
